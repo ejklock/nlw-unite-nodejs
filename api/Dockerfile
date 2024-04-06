@@ -1,5 +1,10 @@
 FROM node:20 AS base
 
+RUN apt update && \
+    apt install -y wget netcat-traditional && \
+    wget -q -O /usr/bin/wait-for https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for && \
+    chmod +x /usr/bin/wait-for
+
 RUN npm i -g pnpm
 
 FROM base AS dependencies
@@ -26,6 +31,7 @@ WORKDIR /usr/src/app
 
 RUN npm i -g pnpm prisma
 
+COPY --from=base /usr/bin/wait-for /usr/bin/wait-for
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/package.json ./package.json

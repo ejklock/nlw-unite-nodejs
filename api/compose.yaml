@@ -1,11 +1,36 @@
 version: '3.8'
 services:
+  postgres:
+    image: postgres:16.2-alpine3.19
+    container_name: db-pass-in
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=api-pass-in
+      - POSTGRES_PASSWORD=api-pass-in
+      - POSTGRES_DB=api-pass-in
+    volumes:
+      - pass-in-db-data:/var/lib/postgresql/data
+    networks:
+      - pass-in
+
   api-pass-in:
+    depends_on:
+      - postgres
     build:
       context: .
     container_name: api-pass-in
+    entrypoint: wait-for postgres:5432 -t 40 -- pnpm start
     ports:
       - 3001:3333
     environment:
-      - DATABASE_URL=file:./db.sqlite
+      - DATABASE_URL=postgresql://api-pass-in:api-pass-in@postgres:5432/api-pass-in
       - API_BASE_URL=http://localhost:3333
+    networks:
+      - pass-in
+
+networks:
+  pass-in:
+    driver: bridge
+volumes:
+  pass-in-db-data:
