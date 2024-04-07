@@ -6,9 +6,9 @@ services:
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_USER=api-pass-in
-      - POSTGRES_PASSWORD=api-pass-in
-      - POSTGRES_DB=api-pass-in
+      - POSTGRES_USER=${POSTGRES_USER:-api-pass-in}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-api-pass-in}
+      - POSTGRES_DB=${POSTGRES_DB:-api-pass-in}
     volumes:
       - pass-in-db-data:/var/lib/postgresql/data
     networks:
@@ -24,7 +24,7 @@ services:
     ports:
       - 3001:3333
     environment:
-      - DATABASE_URL=postgresql://api-pass-in:api-pass-in@postgres:5432/api-pass-in
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-api-pass-in}:${POSTGRES_PASSWORD:-api-pass-in}@postgres:5432/${POSTGRES_DB:-api-pass-in}
       - API_BASE_URL=http://localhost:3333
     networks:
       - pass-in
