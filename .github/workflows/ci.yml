@@ -23,3 +23,14 @@ jobs:
         
       - name: Build Docker image
         run: docker build -t ejklock/nlw-passin:${{steps.generate_sha.outputs.sha}} .
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+        
+      - name: Push Docker image
+        run: |
+          docker push ejklock/nlw-passin:${{steps.generate_sha.outputs.sha}}
+       
