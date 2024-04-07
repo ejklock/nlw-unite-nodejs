@@ -33,4 +33,6 @@ jobs:
       - name: Push Docker image
         run: |
           docker push ejklock/nlw-passin:${{steps.generate_sha.outputs.sha}}
+          docker tag ejklock/nlw-passin:${{steps.generate_sha.outputs.sha}} ejklock/nlw-passin:latest
+          docker push ejklock/nlw-passin:latest
        
